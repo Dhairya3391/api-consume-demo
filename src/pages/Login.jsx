@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import ThemeToggle from '../components/ThemeToggle';
 
 export default function Login() {
     const [email, setEmail] = useState('MRF@darshan.ac.in');
@@ -29,52 +30,53 @@ export default function Login() {
     };
 
     return (
-        <div className="page-container">
-            <div className="glass-panel" style={{ padding: '3rem', width: '100%', maxWidth: '400px' }}>
-                <h2 style={{ textAlign: 'center', marginBottom: '2rem', fontSize: '2rem' }}>Welcome Back</h2>
+        <div className="min-h-screen flex items-center justify-center p-4">
+            <div className="absolute top-4 right-4">
+                <ThemeToggle />
+            </div>
+            <div className="w-full max-w-sm bg-white dark:bg-slate-900 p-8 rounded-lg shadow-sm border border-slate-200 dark:border-slate-800">
+                <h1 className="text-2xl font-bold mb-6 text-center text-slate-900 dark:text-white">Login</h1>
 
                 {error && (
-                    <div style={{ background: 'rgba(239, 68, 68, 0.2)', color: '#fca5a5', padding: '0.75rem', borderRadius: '8px', marginBottom: '1.5rem', border: '1px solid rgba(239, 68, 68, 0.3)' }}>
+                    <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 text-sm rounded border border-red-100 dark:border-red-800">
                         {error}
                     </div>
                 )}
 
-                <form onSubmit={handleSubmit}>
-                    <div className="input-group">
-                        <label style={{ display: 'block', marginBottom: '0.5rem', color: '#94a3b8' }}>Email</label>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <div>
+                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Email</label>
                         <input
                             type="email"
-                            className="input-field"
+                            className="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded focus:outline-none focus:ring-2 focus:ring-slate-400 dark:bg-slate-950 dark:text-white"
+                            placeholder="email@example.com"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
                         />
                     </div>
-
-                    <div className="input-group">
-                        <label style={{ display: 'block', marginBottom: '0.5rem', color: '#94a3b8' }}>Password</label>
+                    <div>
+                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Password</label>
                         <input
                             type="password"
-                            className="input-field"
+                            className="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded focus:outline-none focus:ring-2 focus:ring-slate-400 dark:bg-slate-950 dark:text-white"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
                         />
                     </div>
-
                     <button
                         type="submit"
-                        className="btn-primary"
-                        style={{ width: '100%', marginTop: '1rem' }}
                         disabled={loading}
+                        className="w-full bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 py-2 rounded hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors disabled:opacity-50 font-semibold"
                     >
-                        {loading ? 'Signing in...' : 'Sign In'}
+                        {loading ? 'Processing...' : 'Sign In'}
                     </button>
                 </form>
 
-                <p style={{ textAlign: 'center', marginTop: '2rem', color: '#64748b' }}>
-                    By logging in, you agree to our Terms & Conditions.
-                </p>
+                <div className="mt-6 text-center text-xs text-slate-500 dark:text-slate-400">
+                    Use <code className="bg-slate-100 dark:bg-slate-800 px-1 rounded">MRF@darshan.ac.in</code> / <code className="bg-slate-100 dark:bg-slate-800 px-1 rounded">123</code>
+                </div>
             </div>
         </div>
     );
