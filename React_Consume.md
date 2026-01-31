@@ -224,26 +224,6 @@ useEffect(() => {
 
 ---
 
-## 🎨 Styling (Glassmorphism)
-
-To give it a modern look, we use a dark theme with backdrop filters.
-
-**CSS Variable Example:**
-```css
-:root {
-  --glass-bg: rgba(255, 255, 255, 0.05);
-  --glass-border: rgba(255, 255, 255, 0.1);
-  --bg-color: #0f172a;
-}
-
-.glass-panel {
-  background: var(--glass-bg);
-  backdrop-filter: blur(12px);
-  border: 1px solid var(--glass-border);
-}
-```
-
----
 
 ## ✅ Summary
 
@@ -251,3 +231,40 @@ To give it a modern look, we use a dark theme with backdrop filters.
 2. **Context** holds the "state" (Who is logged in?).
 3. **Router** controls access (Public vs Protected).
 4. **LocalStorage** persists the session (so refreshing doesn't kill the login).
+
+---
+
+## Bonus: Full CRUD Implementation
+
+We expanded the demo to include **Create**, **Update**, and **Delete** operations for the **Department** table, converting the Dashboard into a full management interface.
+
+### 1. Updated API Service (`src/services/api.js`)
+
+We added methods to interact with the standard CRUD endpoints:
+
+```javascript
+export const createDepartment = async (department) => {
+    const response = await api.post('/Department/Create', department);
+    return response.data;
+};
+
+export const updateDepartment = async (id, department) => {
+    const response = await api.put(`/Department/Update/${id}`, department);
+    return response.data;
+};
+
+export const deleteDepartment = async (id) => {
+    const response = await api.delete(`/Department/Delete/${id}`);
+    return response.data;
+};
+```
+
+### 2. Enhanced Dashboard (`src/pages/Dashboard.jsx`)
+
+The dashboard now features:
+- **Add Button**: Opens a modal to create a new department.
+- **Edit Action**: Pre-fills the modal with existing data for updates.
+- **Delete Action**: Confirms before removing a department.
+- **Real-time Updates**: Refetches the list automatically after any change.
+
+This demonstrates a complete cycle of data management consuming a RESTful API in React.

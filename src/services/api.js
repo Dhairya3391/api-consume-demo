@@ -47,4 +47,19 @@ export const getDepartments = async () => {
     return response.data;
 };
 
+export const createDepartment = async (department) => {
+    const response = await api.post('/Department/Create', department);
+    return response.data;
+};
+
+export const updateDepartment = async (id, department) => {
+    const response = await api.put(`/Department/Update/${id}`, department);
+    return response.data;
+};
+
+export const deleteDepartment = async (id) => {
+    const response = await api.delete(`/Department/Delete/${id}`);
+    return response.data;
+};
+
 export default api;
