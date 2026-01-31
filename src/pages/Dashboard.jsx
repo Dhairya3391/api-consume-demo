@@ -1,48 +1,73 @@
 import { useEffect, useState } from 'react';
-import { getDepartments, createDepartment, updateDepartment, deleteDepartment } from '../services/api';
+import { getMeetings, getStaff, getDepartments, getRoles } from '../services/api';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
-import ThemeToggle from '../components/ThemeToggle';
+import { Link } from 'react-router-dom';
+import { normalizeData } from '../utils/normalizeData';
 
 export default function Dashboard() {
-    const [departments, setDepartments] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const { user, logout } = useAuth();
-    const navigate = useNavigate();
+    const { user, hasRole } = useAuth();
+    const isAdmin = hasRole(['Admin']);
 
-    // CRUD State
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [editingDept, setEditingDept] = useState(null);
-    const [deptName, setDeptName] = useState('');
-    const [crudLoading, setCrudLoading] = useState(false);
+    const [stats, setStats] = useState({
+        meetings: 0,
+        staff: 0,
+        departments: 0,
+        roles: 0,
+        upcomingMeetings: []
+    });
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetchData();
+        const fetchStats = async () => {
+            try {
+                let meetingsData = [];
+                let staffData = [];
+                let deptData = [];
+                let rolesData = [];
+
+                if (isAdmin) {
+                    [meetingsData, staffData, deptData, rolesData] = await Promise.all([
+                        getMeetings(),
+                        getStaff(),
+                        getDepartments(),
+                        getRoles()
+                    ]);
+                } else {
+                    meetingsData = await getMeetings();
+                }
+
+                const meetings = normalizeData(meetingsData);
+
+                // Filter upcoming meetings (future dates)
+                const now = new Date();
+                const upcoming = meetings
+                    .filter(m => new Date(m.meetingDate) > now)
+                    .sort((a, b) => new Date(a.meetingDate) - new Date(b.meetingDate))
+                    .slice(0, 5);
+
+                setStats({
+                    meetings: meetings.length,
+                    staff: normalizeData(staffData).length, // Will be 0 if not admin
+                    departments: normalizeData(deptData).length, // Will be 0 if not admin
+                    roles: normalizeData(rolesData).length, // Will be 0 if not admin
+                    upcomingMeetings: upcoming
+                });
+            } catch (error) {
+                console.error("Failed to fetch dashboard stats", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchStats();
     }, []);
 
-    const fetchData = async () => {
-        try {
-            const data = await getDepartments();
-            if (Array.isArray(data)) {
-                setDepartments(data);
-            } else if (data && Array.isArray(data.$values)) {
-                setDepartments(data.$values);
-            } else if (data && Array.isArray(data.data)) {
-                setDepartments(data.data);
-            } else {
-                setDepartments([]);
-            }
-        } catch (error) {
-            console.error("Failed to fetch departments", error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleLogout = () => {
-        logout();
-        navigate('/login');
-    }
+    const statCards = [
+        { title: 'Total Meetings', value: stats.meetings, icon: 'groups', color: 'bg-blue-500', link: '/meetings' },
+        { title: 'Staff Members', value: stats.staff, icon: 'badge', color: 'bg-emerald-500', link: '/staff' },
+        { title: 'Departments', value: stats.departments, icon: 'apartment', color: 'bg-indigo-500', link: '/departments' },
+        { title: 'Roles', value: stats.roles, icon: 'security', color: 'bg-rose-500', link: '/roles' },
+    ];
 
     const displayName = (() => {
         const saved = localStorage.getItem('user');
@@ -54,191 +79,102 @@ export default function Dashboard() {
         }
     })();
 
-    const openAddModal = () => {
-        setEditingDept(null);
-        setDeptName('');
-        setIsModalOpen(true);
-    };
-
-    const openEditModal = (dept) => {
-        setEditingDept(dept);
-        setDeptName(dept.departmentName);
-        setIsModalOpen(true);
-    };
-
-    const handleDelete = async (id) => {
-        if (!window.confirm('Are you sure you want to delete this department?')) return;
-        try {
-            await deleteDepartment(id);
-            await fetchData();
-        } catch (error) {
-            alert('Failed to delete department');
-            console.error(error);
-        }
-    };
-
-    const handleSave = async (e) => {
-        e.preventDefault();
-        setCrudLoading(true);
-        try {
-            if (editingDept) {
-                await updateDepartment(editingDept.departmentID || editingDept.id, {
-                    ...editingDept,
-                    departmentName: deptName
-                });
-            } else {
-                await createDepartment({ departmentName: deptName });
-            }
-            setIsModalOpen(false);
-            fetchData();
-        } catch (error) {
-            alert('Failed to save department');
-            console.error(error);
-        } finally {
-            setCrudLoading(false);
-        }
-    };
+    if (loading) {
+        return (
+            <div className="flex h-64 items-center justify-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-slate-900 dark:border-white"></div>
+            </div>
+        );
+    }
 
     return (
-        <div className="min-h-screen p-6">
-            <header className="max-w-4xl mx-auto mb-8 flex items-center justify-between">
-                <div>
-                    <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Dashboard</h1>
-                    <p className="text-slate-500 dark:text-neutral-400 text-sm">
-                        Welcome, {displayName}
-                    </p>
-                </div>
-                <div className="flex items-center gap-3">
-                    <a
-                        href="https://github.com/Dhairya3391/api-consume-demo"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="p-2 text-slate-500 hover:text-slate-900 dark:text-neutral-400 dark:hover:text-white transition-colors"
-                        title="View Source on GitHub"
-                    >
-                        <svg viewBox="0 0 24 24" className="w-6 h-6 fill-current">
-                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
-                        </svg>
-                    </a>
-                    <ThemeToggle />
-                    <button
-                        onClick={handleLogout}
-                        className="text-sm text-slate-500 dark:text-neutral-400 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-neutral-800 px-3 py-1.5 rounded hover:bg-slate-50 dark:hover:bg-neutral-900 transition-colors bg-white dark:bg-black"
-                    >
-                        Sign Out
-                    </button>
-                </div>
-            </header>
+        <div>
+            <div className="mb-8">
+                <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Dashboard</h1>
+                <p className="text-slate-500 dark:text-neutral-400 mt-1">
+                    Welcome back, <span className="font-semibold text-slate-900 dark:text-white">{displayName}</span>
+                </p>
+            </div>
 
-            <main className="max-w-4xl mx-auto">
-                <div className="bg-white dark:bg-black border border-slate-200 dark:border-neutral-800 rounded-lg shadow-sm overflow-hidden">
-                    <div className="px-6 py-4 border-b border-slate-200 dark:border-neutral-700 flex justify-between items-center">
-                        <div className="flex items-center gap-4">
-                            <h2 className="font-semibold text-slate-800 dark:text-neutral-200">Departments</h2>
-                            <span className="text-xs font-mono bg-slate-100 dark:bg-neutral-900 px-2 py-1 rounded text-slate-700 dark:text-neutral-400 border border-slate-200 dark:border-neutral-800">{departments.length}</span>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                {/* Always show Meetings */}
+                <Link
+                    to="/meetings"
+                    className="bg-white dark:bg-black p-6 rounded-xl border border-slate-200 dark:border-neutral-800 shadow-sm hover:shadow-md transition-shadow group"
+                >
+                    <div className="flex items-center justify-between mb-4">
+                        <div className={`p-3 rounded-lg bg-blue-500 bg-opacity-10 dark:bg-opacity-20`}>
+                            <span className={`material-symbols-outlined text-2xl text-blue-500`}>
+                                groups
+                            </span>
                         </div>
-                        <button
-                            onClick={openAddModal}
-                            className="text-sm font-medium bg-slate-900 dark:bg-white text-white dark:text-black hover:bg-slate-800 dark:hover:bg-neutral-200 px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
-                        >
-                            <span className="material-symbols-outlined text-sm">add</span> Add Department
-                        </button>
+                        <span className="material-symbols-outlined text-slate-300 group-hover:text-slate-500 dark:text-neutral-700 dark:group-hover:text-neutral-500 transition-colors">
+                            arrow_forward
+                        </span>
                     </div>
+                    <h3 className="text-3xl font-bold text-slate-900 dark:text-white mb-1">{stats.meetings}</h3>
+                    <p className="text-sm text-slate-500 dark:text-neutral-400 font-medium">Total Meetings</p>
+                </Link>
 
-                    {loading ? (
-                        <div className="p-8 text-center text-slate-400">Loading...</div>
+                {isAdmin && statCards.slice(1).map((card, idx) => (
+                    <Link
+                        to={card.link}
+                        key={idx}
+                        className="bg-white dark:bg-black p-6 rounded-xl border border-slate-200 dark:border-neutral-800 shadow-sm hover:shadow-md transition-shadow group"
+                    >
+                        <div className="flex items-center justify-between mb-4">
+                            <div className={`p-3 rounded-lg ${card.color} bg-opacity-10 dark:bg-opacity-20`}>
+                                <span className={`material-symbols-outlined text-2xl ${card.color.replace('bg-', 'text-')}`}>
+                                    {card.icon}
+                                </span>
+                            </div>
+                            <span className="material-symbols-outlined text-slate-300 group-hover:text-slate-500 dark:text-neutral-700 dark:group-hover:text-neutral-500 transition-colors">
+                                arrow_forward
+                            </span>
+                        </div>
+                        <h3 className="text-3xl font-bold text-slate-900 dark:text-white mb-1">{card.value}</h3>
+                        <p className="text-sm text-slate-500 dark:text-neutral-400 font-medium">{card.title}</p>
+                    </Link>
+                ))}
+            </div>
+
+            <div className="bg-white dark:bg-black rounded-xl border border-slate-200 dark:border-neutral-800 shadow-sm overflow-hidden">
+                <div className="px-6 py-4 border-b border-slate-200 dark:border-neutral-800 flex justify-between items-center">
+                    <h2 className="text-lg font-bold text-slate-900 dark:text-white">Upcoming Meetings</h2>
+                    <Link to="/meetings" className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline">
+                        View All
+                    </Link>
+                </div>
+                <div className="divide-y divide-slate-100 dark:divide-neutral-800">
+                    {stats.upcomingMeetings.length > 0 ? (
+                        stats.upcomingMeetings.map((meeting) => (
+                            <div key={meeting.meetingID} className="p-4 hover:bg-slate-50 dark:hover:bg-neutral-900/50 transition-colors flex items-center justify-between">
+                                <div className="flex items-start gap-4">
+                                    <div className="flex flex-col items-center justify-center w-12 h-12 bg-slate-100 dark:bg-neutral-800 rounded-lg text-slate-900 dark:text-white font-medium text-xs">
+                                        <span>{new Date(meeting.meetingDate).getDate()}</span>
+                                        <span className="text-[10px] uppercase text-slate-500 dark:text-neutral-400">
+                                            {new Date(meeting.meetingDate).toLocaleString('default', { month: 'short' })}
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <h3 className="font-medium text-slate-900 dark:text-white">{meeting.meetingTitle}</h3>
+                                        <p className="text-xs text-slate-500 dark:text-neutral-400 mt-0.5">
+                                            {new Date(meeting.meetingDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} • {meeting.meetingNumber}
+                                        </p>
+                                    </div>
+                                </div>
+                                <span className="bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 text-xs px-2 py-1 rounded border border-blue-100 dark:border-blue-900/30">
+                                    Upcoming
+                                </span>
+                            </div>
+                        ))
                     ) : (
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-left text-sm">
-                                <thead className="bg-slate-50 dark:bg-neutral-900/50 text-slate-500 dark:text-neutral-400 border-b border-slate-200 dark:border-neutral-700">
-                                    <tr>
-                                        <th className="px-6 py-3 font-medium">ID</th>
-                                        <th className="px-6 py-3 font-medium">Name</th>
-                                        <th className="px-6 py-3 font-medium text-right">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-slate-200 dark:divide-neutral-700">
-                                    {departments.map((dept) => (
-                                        <tr key={dept.departmentID || dept.id} className="hover:bg-slate-50/50 dark:hover:bg-neutral-900/50 text-slate-700 dark:text-neutral-300">
-                                            <td className="px-6 py-3 font-mono text-slate-400 dark:text-neutral-500">#{dept.departmentID || dept.id}</td>
-                                            <td className="px-6 py-3 font-medium">{dept.departmentName || "Unnamed"}</td>
-                                            <td className="px-6 py-3 text-right">
-                                                <div className="flex items-center justify-end gap-2">
-                                                    <button
-                                                        onClick={() => openEditModal(dept)}
-                                                        className="p-1 hover:bg-slate-100 dark:hover:bg-neutral-800 rounded text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
-                                                        title="Edit"
-                                                    >
-                                                        <span className="material-symbols-outlined text-lg">edit</span>
-                                                    </button>
-                                                    <button
-                                                        onClick={() => handleDelete(dept.departmentID || dept.id)}
-                                                        className="p-1 hover:bg-slate-100 dark:hover:bg-neutral-800 rounded text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
-                                                        title="Delete"
-                                                    >
-                                                        <span className="material-symbols-outlined text-lg">delete</span>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                    {departments.length === 0 && (
-                                        <tr>
-                                            <td colSpan="3" className="px-6 py-8 text-center text-slate-500">
-                                                No departments found
-                                            </td>
-                                        </tr>
-                                    )}
-                                </tbody>
-                            </table>
+                        <div className="p-8 text-center text-slate-500 dark:text-neutral-400">
+                            No upcoming meetings scheduled.
                         </div>
                     )}
                 </div>
-            </main>
-
-            {/* Modal */}
-            {isModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-                    <div className="bg-white dark:bg-black rounded-xl shadow-xl w-full max-w-md border border-slate-200 dark:border-neutral-800 p-6">
-                        <h2 className="text-xl font-bold mb-4 text-slate-900 dark:text-white">
-                            {editingDept ? 'Edit Department' : 'New Department'}
-                        </h2>
-                        <form onSubmit={handleSave}>
-                            <div className="mb-6">
-                                <label className="block text-sm font-medium text-slate-700 dark:text-neutral-300 mb-2">
-                                    Department Name
-                                </label>
-                                <input
-                                    type="text"
-                                    className="w-full px-4 py-2 border border-slate-300 dark:border-neutral-800 rounded-lg focus:ring-2 focus:ring-neutral-500 dark:bg-black dark:text-white outline-none"
-                                    value={deptName}
-                                    onChange={(e) => setDeptName(e.target.value)}
-                                    placeholder="e.g. Engineering"
-                                    required
-                                    autoFocus
-                                />
-                            </div>
-                            <div className="flex justify-end gap-3">
-                                <button
-                                    type="button"
-                                    onClick={() => setIsModalOpen(false)}
-                                    className="px-4 py-2 text-slate-700 dark:text-neutral-300 hover:bg-slate-100 dark:hover:bg-neutral-900 rounded-lg transition-colors"
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    type="submit"
-                                    disabled={crudLoading}
-                                    className="px-4 py-2 bg-slate-900 dark:bg-white text-white dark:text-black hover:bg-slate-800 dark:hover:bg-neutral-200 rounded-lg transition-colors flex items-center gap-2"
-                                >
-                                    {crudLoading && <span className="material-symbols-outlined text-sm animate-spin">progress_activity</span>}
-                                    {editingDept ? 'Save Changes' : 'Create Department'}
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            )}
+            </div>
         </div>
     );
 }

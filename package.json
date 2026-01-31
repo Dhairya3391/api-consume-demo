@@ -1,7 +1,8 @@
 {
-  "name": "client",
+  "name": "mom-portal-client",
+  "description": "Minutes of Meeting (MOM) Portal - React Frontend",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -12,6 +13,7 @@
   "dependencies": {
     "@vercel/analytics": "^1.6.1",
     "axios": "^1.13.4",
+    "jwt-decode": "^4.0.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-router-dom": "^7.13.0"
