@@ -1,10 +1,10 @@
-# Lab 17 | Consuming JWT Auth API in React (Complete Demo)
+# Consuming JWT Auth API in React
 
 This guide demonstrates how to consume a .NET Web API with JWT Authentication in a React application using Vite.
 
 ## 🎯 Goal
 - **Login** using the API (`/api/Auth/login`).
-- **Store** the JWT token securely (in `localStorage` for this demo).
+- **Store** the JWT token (in `localStorage` for this demo, but we can use cookies as well).
 - **Protect** routes so only logged-in users can access the dashboard.
 - **Attach** the token automatically to every API request using Axios Interceptors.
 - **Logout** functionality.
@@ -13,12 +13,12 @@ This guide demonstrates how to consume a .NET Web API with JWT Authentication in
 
 ## 🛠 Prerequisites
 
-- **Frontend**: React + Vite (created via `bun create vite client --template react`).
+- **Frontend**: React + Vite (created via `npm create vite client --template react`).
 - **Backend**: Existing API at `https://mom-webapi.onrender.com`.
 - **Packages**: `axios`, `react-router-dom`.
 
 ```bash
-bun add axios react-router-dom
+npm add axios react-router-dom
 ```
 
 ---
@@ -27,9 +27,10 @@ bun add axios react-router-dom
 
 We create a central `api.js` file to handle all HTTP requests. This ensures we don't repeat code.
 
-**Key Concept: Interceptors**
-- **Request Interceptor**: Before sending a request, check if we have a token. If yes, add `Authorization: Bearer <token>` header.
-- **Response Interceptor**: If the API replies with `401 Unauthorized`, automatically log the user out.
+**What are Interceptors?**
+Think of them like **middleware** or a **security guard** for your API calls:
+- **Request Interceptor**: intercepts every outgoing request. We use it to **automatically attach the JWT token**. This means you don't have to manually add headers for every single API call.
+- **Response Interceptor**: intercepts every incoming response. We use it to **catch 401 (Unauthorized) errors** globally. If the token expires or is invalid, it automatically logs the user out.
 
 **File:** `src/services/api.js`
 
@@ -57,7 +58,7 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// 2. Response Interceptor: Handle 401
+// 2. Response Interceptor: Handle 401 (Unauthorized)
 api.interceptors.response.use(
   (response) => response,
   (error) => {
