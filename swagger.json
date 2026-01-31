@@ -1,0 +1,1353 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "MinutesOfMeeting",
+        "version": "1.0"
+    },
+    "paths": {
+        "/api/Auth/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "parameters": [
+                    {
+                        "name": "email",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "password",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/Department/GetAll": {
+            "get": {
+                "tags": [
+                    "Department"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/Department/GetById/{id}": {
+            "get": {
+                "tags": [
+                    "Department"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/Department/Create": {
+            "post": {
+                "tags": [
+                    "Department"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Department"
+                            }
+                        },
+                        "text/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Department"
+                            }
+                        },
+                        "application/*+json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Department"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/Department/Update/{id}": {
+            "put": {
+                "tags": [
+                    "Department"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Department"
+                            }
+                        },
+                        "text/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Department"
+                            }
+                        },
+                        "application/*+json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Department"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/Department/Delete/{id}": {
+            "delete": {
+                "tags": [
+                    "Department"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/MOM_Meeting/GetAll": {
+            "get": {
+                "tags": [
+                    "MOM_Meeting"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/MOM_Meeting/GetById/{id}": {
+            "get": {
+                "tags": [
+                    "MOM_Meeting"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/MOM_Meeting/Create": {
+            "post": {
+                "tags": [
+                    "MOM_Meeting"
+                ],
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "MeetingID": {
+                                        "type": "integer",
+                                        "format": "int32"
+                                    },
+                                    "MeetingDate": {
+                                        "type": "string",
+                                        "format": "date-time"
+                                    },
+                                    "MeetingVenueID": {
+                                        "type": "integer",
+                                        "format": "int32"
+                                    },
+                                    "MeetingTypeID": {
+                                        "type": "integer",
+                                        "format": "int32"
+                                    },
+                                    "DepartmentID": {
+                                        "type": "integer",
+                                        "format": "int32"
+                                    },
+                                    "MeetingTitle": {
+                                        "type": "string"
+                                    },
+                                    "MeetingNumber": {
+                                        "type": "string"
+                                    },
+                                    "MeetingDescription": {
+                                        "type": "string"
+                                    },
+                                    "DocumentPath": {
+                                        "type": "string"
+                                    },
+                                    "IsCancelled": {
+                                        "type": "boolean"
+                                    },
+                                    "DocumentFile": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "CancellationDateTime": {
+                                        "type": "string",
+                                        "format": "date-time"
+                                    },
+                                    "CancellationReason": {
+                                        "type": "string"
+                                    }
+                                }
+                            },
+                            "encoding": {
+                                "MeetingID": {
+                                    "style": "form"
+                                },
+                                "MeetingDate": {
+                                    "style": "form"
+                                },
+                                "MeetingVenueID": {
+                                    "style": "form"
+                                },
+                                "MeetingTypeID": {
+                                    "style": "form"
+                                },
+                                "DepartmentID": {
+                                    "style": "form"
+                                },
+                                "MeetingTitle": {
+                                    "style": "form"
+                                },
+                                "MeetingNumber": {
+                                    "style": "form"
+                                },
+                                "MeetingDescription": {
+                                    "style": "form"
+                                },
+                                "DocumentPath": {
+                                    "style": "form"
+                                },
+                                "IsCancelled": {
+                                    "style": "form"
+                                },
+                                "DocumentFile": {
+                                    "style": "form"
+                                },
+                                "CancellationDateTime": {
+                                    "style": "form"
+                                },
+                                "CancellationReason": {
+                                    "style": "form"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/MOM_Meeting/Update/{id}": {
+            "put": {
+                "tags": [
+                    "MOM_Meeting"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Meeting"
+                            }
+                        },
+                        "text/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Meeting"
+                            }
+                        },
+                        "application/*+json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Meeting"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/MOM_Meeting/Delete/{id}": {
+            "delete": {
+                "tags": [
+                    "MOM_Meeting"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/MOM_Meeting/GetMeetingDetails/Details/{meetingId}": {
+            "get": {
+                "tags": [
+                    "MOM_Meeting"
+                ],
+                "parameters": [
+                    {
+                        "name": "meetingId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/MOM_Meeting/GetFullMeetingDetails/FullDetails/{meetingId}": {
+            "get": {
+                "tags": [
+                    "MOM_Meeting"
+                ],
+                "parameters": [
+                    {
+                        "name": "meetingId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/MOM_MeetingMember/GetAll": {
+            "get": {
+                "tags": [
+                    "MOM_MeetingMember"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/MOM_MeetingMember/GetById/{id}": {
+            "get": {
+                "tags": [
+                    "MOM_MeetingMember"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/MOM_MeetingMember/Create": {
+            "post": {
+                "tags": [
+                    "MOM_MeetingMember"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MeetingMember"
+                            }
+                        },
+                        "text/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MeetingMember"
+                            }
+                        },
+                        "application/*+json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MeetingMember"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/MOM_MeetingMember/Update/{id}": {
+            "put": {
+                "tags": [
+                    "MOM_MeetingMember"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MeetingMember"
+                            }
+                        },
+                        "text/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MeetingMember"
+                            }
+                        },
+                        "application/*+json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MeetingMember"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/MOM_MeetingMember/Delete/{id}": {
+            "delete": {
+                "tags": [
+                    "MOM_MeetingMember"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/MOM_MeetingMember/GetByMeetingId/GetByMeetingId/{meetingId}": {
+            "get": {
+                "tags": [
+                    "MOM_MeetingMember"
+                ],
+                "parameters": [
+                    {
+                        "name": "meetingId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/MOM_MeetingMember/GetPagedMembers/ByMeeting/{meetingId}": {
+            "get": {
+                "tags": [
+                    "MOM_MeetingMember"
+                ],
+                "parameters": [
+                    {
+                        "name": "meetingId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "default": 1
+                        }
+                    },
+                    {
+                        "name": "pageSize",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "default": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/MOM_MeetingType/GetAll": {
+            "get": {
+                "tags": [
+                    "MOM_MeetingType"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/MOM_MeetingType/GetById/{id}": {
+            "get": {
+                "tags": [
+                    "MOM_MeetingType"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/MOM_MeetingType/Create": {
+            "post": {
+                "tags": [
+                    "MOM_MeetingType"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MeetingType"
+                            }
+                        },
+                        "text/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MeetingType"
+                            }
+                        },
+                        "application/*+json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MeetingType"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/MOM_MeetingType/Update/{id}": {
+            "put": {
+                "tags": [
+                    "MOM_MeetingType"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MeetingType"
+                            }
+                        },
+                        "text/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MeetingType"
+                            }
+                        },
+                        "application/*+json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MeetingType"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/MOM_MeetingType/Delete/{id}": {
+            "delete": {
+                "tags": [
+                    "MOM_MeetingType"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/MOM_MeetingVenue/GetAll": {
+            "get": {
+                "tags": [
+                    "MOM_MeetingVenue"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/MOM_MeetingVenue/GetById/{id}": {
+            "get": {
+                "tags": [
+                    "MOM_MeetingVenue"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/MOM_MeetingVenue/Create": {
+            "post": {
+                "tags": [
+                    "MOM_MeetingVenue"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MeetingVenue"
+                            }
+                        },
+                        "text/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MeetingVenue"
+                            }
+                        },
+                        "application/*+json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MeetingVenue"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/MOM_MeetingVenue/Update/{id}": {
+            "put": {
+                "tags": [
+                    "MOM_MeetingVenue"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MeetingVenue"
+                            }
+                        },
+                        "text/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MeetingVenue"
+                            }
+                        },
+                        "application/*+json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MeetingVenue"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/MOM_MeetingVenue/Delete/{id}": {
+            "delete": {
+                "tags": [
+                    "MOM_MeetingVenue"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/MOM_Role/GetAll": {
+            "get": {
+                "tags": [
+                    "MOM_Role"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/MOM_Role/GetById/{id}": {
+            "get": {
+                "tags": [
+                    "MOM_Role"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/MOM_Role/Create": {
+            "post": {
+                "tags": [
+                    "MOM_Role"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Role"
+                            }
+                        },
+                        "text/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Role"
+                            }
+                        },
+                        "application/*+json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Role"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/MOM_Role/Update/{id}": {
+            "put": {
+                "tags": [
+                    "MOM_Role"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Role"
+                            }
+                        },
+                        "text/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Role"
+                            }
+                        },
+                        "application/*+json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Role"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/MOM_Role/Delete/{id}": {
+            "delete": {
+                "tags": [
+                    "MOM_Role"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/MOM_Staff/GetAll": {
+            "get": {
+                "tags": [
+                    "MOM_Staff"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/MOM_Staff/GetById/{id}": {
+            "get": {
+                "tags": [
+                    "MOM_Staff"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/MOM_Staff/Create": {
+            "post": {
+                "tags": [
+                    "MOM_Staff"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Staff"
+                            }
+                        },
+                        "text/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Staff"
+                            }
+                        },
+                        "application/*+json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Staff"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/MOM_Staff/Update/{id}": {
+            "put": {
+                "tags": [
+                    "MOM_Staff"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Staff"
+                            }
+                        },
+                        "text/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Staff"
+                            }
+                        },
+                        "application/*+json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Staff"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/MOM_Staff/Delete/{id}": {
+            "delete": {
+                "tags": [
+                    "MOM_Staff"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Department": {
+                "type": "object",
+                "properties": {
+                    "departmentID": {
+                        "type": "integer",
+                        "format": "int32",
+                        "nullable": true
+                    },
+                    "departmentName": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "Meeting": {
+                "type": "object",
+                "properties": {
+                    "meetingID": {
+                        "type": "integer",
+                        "format": "int32",
+                        "nullable": true
+                    },
+                    "meetingDate": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "meetingVenueID": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "meetingTypeID": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "departmentID": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "meetingTitle": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "meetingNumber": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "meetingDescription": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "documentPath": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "isCancelled": {
+                        "type": "boolean",
+                        "nullable": true
+                    },
+                    "documentFile": {
+                        "type": "string",
+                        "format": "binary",
+                        "nullable": true
+                    },
+                    "cancellationDateTime": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    },
+                    "cancellationReason": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "MeetingMember": {
+                "type": "object",
+                "properties": {
+                    "meetingMemberID": {
+                        "type": "integer",
+                        "format": "int32",
+                        "nullable": true
+                    },
+                    "meetingID": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "staffID": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "isPresent": {
+                        "type": "boolean"
+                    },
+                    "remarks": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "MeetingType": {
+                "type": "object",
+                "properties": {
+                    "meetingTypeID": {
+                        "type": "integer",
+                        "format": "int32",
+                        "nullable": true
+                    },
+                    "meetingTypeName": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "remarks": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "MeetingVenue": {
+                "type": "object",
+                "properties": {
+                    "meetingVenueID": {
+                        "type": "integer",
+                        "format": "int32",
+                        "nullable": true
+                    },
+                    "meetingVenueName": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "Role": {
+                "type": "object",
+                "properties": {
+                    "roleID": {
+                        "type": "integer",
+                        "format": "int32",
+                        "nullable": true
+                    },
+                    "roleName": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "Staff": {
+                "type": "object",
+                "properties": {
+                    "staffID": {
+                        "type": "integer",
+                        "format": "int32",
+                        "nullable": true
+                    },
+                    "departmentID": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "roleID": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "staffName": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "mobileNo": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "password": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "emailAddress": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "isActive": {
+                        "type": "boolean"
+                    },
+                    "remarks": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            }
+        },
+        "securitySchemes": {
+            "Bearer": {
+                "type": "http",
+                "description": "Please insert JWT token only",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
+        }
+    },
+    "security": [
+        {
+            "Bearer": []
+        }
+    ]
+}
