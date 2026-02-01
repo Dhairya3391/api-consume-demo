@@ -237,6 +237,72 @@ useEffect(() => {
 
 ---
 
+## 👮 Step 6: Implement RBAC (Role-Based Access Control)
+
+We enforce permissions by attaching roles to the user's session and checking them before rendering sensitive routes or UI elements.
+
+### 1. Extract Role from Token
+In `src/context/AuthContext.jsx`, we decode the JWT to extract the `role` claim. This allows us to know *who* the user is.
+
+```javascript
+import { jwtDecode } from "jwt-decode";
+
+// ... inside AuthProvider
+const getRoleFromToken = (decodedToken) => {
+    return decodedToken.role || decodedToken['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
+};
+
+const hasRole = (requiredRoles) => {
+    if (!user || !user.role) return false;
+    if (Array.isArray(requiredRoles)) {
+        return requiredRoles.includes(user.role);
+    }
+    return user.role === requiredRoles;
+};
+```
+
+### 2. Protect Routes by Role
+We updated `src/App.jsx` to pass an `allowedRoles` prop to our `ProtectedRoute` wrapper.
+
+```jsx
+{/* Admin-only Routes */}
+<Route 
+  path="/staff" 
+  element={
+    <ProtectedRoute allowedRoles={['Admin', 'SuperAdmin']}>
+      <Staff />
+    </ProtectedRoute>
+  } 
+/>
+```
+
+### 3. Handle Unauthorized Access
+In `src/components/ProtectedRoute.jsx`, we check if the user has the required role. If not, we show an "Access Denied" message.
+
+```jsx
+if (allowedRoles && !hasRole(allowedRoles)) {
+    return <AccessDenied />; // Or redirect
+}
+```
+
+### 4. Conditional UI Rendering
+In components like `src/pages/Dashboard.jsx`, we hide or show elements based on the user's role.
+
+```jsx
+const { hasRole } = useAuth();
+const isAdmin = hasRole(['Admin']);
+
+{/* Only Admins see these cards */}
+{isAdmin && (
+    <>
+        <StatCard title="Staff" ... />
+        <StatCard title="Roles" ... />
+    </>
+)}
+```
+
+---
+
 ## Bonus: Full CRUD Implementation
 
 We expanded the demo to include **Create**, **Update**, and **Delete** operations for the **Department** table, converting the Dashboard into a full management interface.
